@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <title>Employee List</title>
+</head>
+<body>
+    <div class="container">
+        <h2 class="text-center">Employee List</h2>
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="employee : ${EmployeesList}">
+                    <td th:text="${employee.id}"></td>
+                    <td th:text="${employee.firstName}"></td>
+                    <td th:text="${employee.lastName}"></td>
+                    <td th:text="${employee.email}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <a th:href="@{/testing/add}" class="btn btn-primary" style="width: 115px;">
+            Add Employee
+        </a>
+        
+        
+        
+    </div>
+    
+    <!-- Bootstrap JavaScript (optional, if you're using components that require it) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>
