@@ -35,8 +35,7 @@
             display: flex;
             justify-content: space-between;
         }
-        .form-container button[type="submit"]
-        {
+        .form-container button[type="submit"]{
             border: none;
             color: white;
             padding: 10px 20px;
@@ -44,7 +43,6 @@
             cursor: pointer;
         }
        
-        
         
         .form-container button[type="submit"]:hover {
             background-color: #0056b3;
@@ -62,16 +60,15 @@
         .btn-cancel:hover {
             text-decoration: underline;
         }
-
-        
     </style>
 </head>
 <body>
     <div class="container">
-        <h2 class="text-center">Create Employee</h2>
+        <h2 class="text-center">Update Employee</h2>
         <!-- Form for adding new employee -->
         <form class="form-container" th:action="@{/api/save}" th:object="${employee}" method="post">
             <div class="form-group">
+                <input type="hidden" th:field="*{id}">
                 <label for="first_name">First Name:</label>
                 <input type="text" class="form-control" id="first_name" name="first_name"th:field="*{firstName}" required>
             </div>
@@ -84,11 +81,10 @@
                 <input type="email" class="form-control" id="email" name="email" th:field="*{email}" required>
             </div>
             <div class="btn-container">
-                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="submit" class="btn btn-primary">Update</button>
                 <a th:href="@{/api/list}" class="btn btn-cancel">
                     Cancel
                 </a>
-                
 
 
             </div>
