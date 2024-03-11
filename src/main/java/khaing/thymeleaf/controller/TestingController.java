@@ -14,18 +14,24 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import khaing.thymeleaf.dao.EmployeeRepo;
 import khaing.thymeleaf.entity.EmployeeEntity;
+import khaing.thymeleaf.service.EmployeeRestId;
 
 @Controller
 @RequestMapping("api")
 public class TestingController {
+    
     private EmployeeRepo employeeRepo;
+    private EmployeeRestId employeeRestId;
 
     @Autowired
-    public TestingController(EmployeeRepo thEmployeeRepo){
+    public TestingController(EmployeeRepo thEmployeeRepo,EmployeeRestId theEmployeeRestId){
         this.employeeRepo = thEmployeeRepo;
+        this.employeeRestId = theEmployeeRestId;
+
     }
     @GetMapping("/list")
     public String listEmployees(Model theModel){
+        employeeRestId.resetEmployeeId();
         List<EmployeeEntity> theEmployees = employeeRepo.findAll();
         theModel.addAttribute("EmployeesList", theEmployees);
         return "employees/listEmployees";
