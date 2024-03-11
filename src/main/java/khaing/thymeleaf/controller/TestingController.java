@@ -17,7 +17,7 @@ import khaing.thymeleaf.entity.EmployeeEntity;
 import khaing.thymeleaf.service.EmployeeRestId;
 
 @Controller
-@RequestMapping("api")
+@RequestMapping("/api")
 public class TestingController {
     
     private EmployeeRepo employeeRepo;
@@ -62,5 +62,9 @@ public class TestingController {
         employeeRepo.deleteById(theId);
         return "redirect:/api/list";
 
+    }
+    @GetMapping("/showLogin")
+    public String loginPage(){
+        return "loginRegisterTemplate";
     }
 }   
