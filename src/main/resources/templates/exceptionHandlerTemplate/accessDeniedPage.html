@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .lock {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            color: rgb(15, 15, 15);
+        }
+
+        .message {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .message h1 {
+            color: #333;
+        }
+
+        .message p {
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="lock"></div>
+    
+    <div class="message">
+        <h2>Access to this page is restricted</h2>
+        <p>Please check with the site admin if you believe this is a mistake.</p>
+    </div>
+</body>
+
+</html>
