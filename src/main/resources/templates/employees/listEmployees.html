@@ -48,9 +48,7 @@
             padding-top: 50px;
         }
         
-    .navbar-brand {
-        color: black !important;
-    }
+    
     </style>
 </head>
 
@@ -59,18 +57,20 @@
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header" style="display: flex; align-items: center;">
-                <a class="navbar-brand" href="#" style="display: flex; align-items: center;">
+                <a class="navbar-brand" href="#" style="display: flex; align-items: center; color: black">
                     <img th:src="@{/css/image/YomaBankLogo.png}" alt="Yoma Bank Logo" height="20" style="margin-right: 5px;">
-                    <span style="vertical-align: middle;">Yoma Bank</span>
+                    <span style="vertical-align: middle;">Yoma Bank(Core)</span>
                 </a>
+                
             </div>
     
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
+                    <li><a th:href="@{/api/add}" class="create" style="color:black"><i class="fas fa-users"></i>  Add Employee</a></li>
                     <li>
                         <form th:action="@{/logout}" method="post" style="display: inline; padding: 10px;">
-                            <button type="submit" class="btn btn-default" style="margin: 0; padding: 16px; background: none; color: black; border: none;">Log Out <i class="fas fa-sign-out-alt"></i></button>
+                            <button type="submit" class="btn btn-default" style="margin: 0; padding: 16px; background: none; color: black; border: none;"><i class="fas fa-sign-out-alt"></i> Log Out</button>
                         </form>
                     </li>
                 </ul>
@@ -81,11 +81,6 @@
     
     <div class="container">
         <h2 class="text-center">Employee List</h2>
-        <br>
-        <div class="button-container">
-            
-            <a th:href="@{/api/add}" class="btn btn-primary" style="width: 115px;">Add Employee</a>
-        </div>
         <br>
         <table id="employeeTable" class="table table-striped table-bordered">
             <thead>
@@ -104,8 +99,8 @@
                     <td th:text="${employee.lastName}"></td>
                     <td th:text="${employee.email}"></td>
                     <td>
-                        <a th:href="@{/api/update(employeeId=${employee.id})}" class="btn btn-primary">Update</a>
-                        <a th:href="@{/api/delete(employeeId=${employee.id})}" class="btn btn-danger"
+                        <a th:href="@{/api/update(employeeId=${employee.id})}" class="btn btn-primary" style="padding : 8px 20px; margin-left: px; ">Edit</a>
+                        <a th:href="@{/api/delete(employeeId=${employee.id})}" class="btn btn-danger" style = "padding: 8px 15px"
                             onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
                     </td>
                 </tr>
