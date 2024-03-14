@@ -49,7 +49,7 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-			<version>8.0.28</version> <!-- Replace with the latest version available -->
+			<version>8.0.28</version> 
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -59,6 +59,17 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.10.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.github.librepdf/openpdf -->
+		<dependency>
+			<groupId>com.github.librepdf</groupId>
+			<artifactId>openpdf</artifactId>
+			<version>2.0.1</version>
 		</dependency>
 	</dependencies>
 
