@@ -18,6 +18,7 @@ public class CsvFileGenerator {
                         employee.getLastName(),
                         employee.getEmail());
             }
+            printer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

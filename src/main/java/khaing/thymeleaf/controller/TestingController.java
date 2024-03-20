@@ -1,12 +1,10 @@
 package khaing.thymeleaf.controller;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +18,7 @@ import com.lowagie.text.DocumentException;
 import jakarta.servlet.http.HttpServletResponse;
 import khaing.thymeleaf.dao.EmployeeRepo;
 import khaing.thymeleaf.entity.EmployeeEntity;
+import khaing.thymeleaf.service.CacheService;
 import khaing.thymeleaf.service.CsvFileGenerator;
 import khaing.thymeleaf.service.EmployeeRestId;
 import khaing.thymeleaf.service.PdfFileGenerator;
@@ -32,17 +31,23 @@ public class TestingController {
     private EmployeeRestId employeeRestId;
     private CsvFileGenerator csvFileGenerator;
     private PdfFileGenerator pdfFileGenerator;
+    private CacheService cacheService;
 
     @Autowired
     public TestingController(EmployeeRepo thEmployeeRepo, EmployeeRestId theEmployeeRestId,
-            CsvFileGenerator theCsvFileGenerator, PdfFileGenerator thPdfFileGenerator) {
+            CsvFileGenerator theCsvFileGenerator, PdfFileGenerator thPdfFileGenerator,CacheService theCacheService) {
         this.employeeRepo = thEmployeeRepo;
         this.employeeRestId = theEmployeeRestId;
         this.csvFileGenerator = theCsvFileGenerator;
         this.pdfFileGenerator = thPdfFileGenerator;
+        this.cacheService = theCacheService;
 
     }
 
+    @GetMapping("/home")
+    public String home(){
+        return "employees/homepage";
+    }
     @GetMapping("/list")
     public String listEmployees(Model theModel) {
         employeeRestId.resetEmployeeId();
@@ -100,13 +105,11 @@ public class TestingController {
     @GetMapping("/export-to-pdf")
     public void generatePdfFile(HttpServletResponse response) throws DocumentException, IOException {
         response.setContentType("application/pdf");
-        DateFormat dateFormat = new SimpleDateFormat("YYYY-MM-DD:HH:MM:SS");
-        String currentDateTime = dateFormat.format(new Date());
         String headerkey = "Content-Disposition";
-        String headervalue = "attachment; filename=student" + currentDateTime + ".pdf";
+        String headervalue = "attachment; filename=Employees_list" + ".pdf";
         response.setHeader(headerkey, headervalue);
+
         List<EmployeeEntity> employeeEntities = employeeRepo.findAll();
-        PdfFileGenerator generator = new PdfFileGenerator();
-        generator.writeEmployeesToPdf(employeeEntities, response);
+        pdfFileGenerator.writeEmployeesToPdf(employeeEntities, response);
     }
 }

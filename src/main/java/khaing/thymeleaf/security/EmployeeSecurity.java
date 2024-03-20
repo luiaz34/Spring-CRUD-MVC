@@ -27,12 +27,12 @@ public class EmployeeSecurity {
                         .loginPage("/api/showLogin")
                         .loginProcessingUrl("/authenticateTheUser")
                         .permitAll()
-                        .defaultSuccessUrl("/api/list", true))
+                        .defaultSuccessUrl("/api/home", true))
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // Custom logout URL to match your form action.
-                        .logoutSuccessUrl("/api/showLogin") // Redirect to login page after logout.
-                        .invalidateHttpSession(true) // Invalidate session.
-                        .clearAuthentication(true) // Clear authentication attributes.
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/api/showLogin") 
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true) 
                         .permitAll())
                 .exceptionHandling(configurer -> configurer
                         .accessDeniedPage("/api/roleAccessDenied"));

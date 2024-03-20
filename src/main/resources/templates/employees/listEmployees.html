@@ -1,114 +1,28 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
-    <link rel="icon" th:href="@{/css/image/YomaBankLogo.png}" type="image/png">
-    <title>Employee List</title>
-    <style>
-        body {
-            padding-top: 50px;
-        }
-    </style>
-</head>
-
-<body>
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header" style="display: flex; align-items: center;">
-                <a class="navbar-brand" href="#" style="display: flex; align-items: center; color: black">
-                    <img th:src="@{/css/image/YomaBankLogo.png}" alt="Yoma Bank Logo" height="20"
-                        style="margin-right: 5px;">
-                    <span style="vertical-align: middle;">Yoma Bank(Core)</span>
-                </a>
-
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <li style="justify-content: center; align-items: center;">
-                        <div class="dropdown"  style="margin: 7px; justify-content: center; align-items: center;">
-                            <a class="btn dropdown-toggle" href="#" role="button" 
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;">
-                                <i class="fa-solid fa-file-export"></i> Export to <span class="caret"></span>
-                            </a>
-                    
-                            <ul class="dropdown-menu" style="text-align: center;">
-                               <li><a class="dropdown-item" th:href="@{/api/export-to-csv}" method="GET" style="color: black">CSV</a></li>
-                                <div style="border-top: 1px solid rgba(0, 0, 0, 0.1); margin: 0.5rem 0;"></div>
-                               <li><a class="dropdown-item" th:href="@{/api/export-to-pdf}" method="GET" style="color: black">PDF</a></li>
-                                <div style="border-top: 1px solid rgba(0, 0, 0, 0.1); margin: 0.5rem 0;"></div>
-                               <li><a class="dropdown-item" href="#" style="color: black">MicroSoft Word</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                    
-                    <li>
-                        <a th:href="@{/api/add}" class="create" style="color:black"><i class="fas fa-users"></i> Add
-                            Employee</a>
-                    </li>
-                    <li>
-                        <form th:action="@{/logout}" method="post" style="display: inline; padding: 10px;">
-                            <button type="submit" class="btn btn-default"
-                                style="margin: 0; padding: 16px; background: none; color: black; border: none;"><i
-                                    class="fas fa-sign-out-alt"></i> Log Out</button>
-                        </form>
-                    </li>
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
-    </nav>
-
-
-    <div class="container">
-        <h2 class="text-center">Employee List</h2>
-        <br>
-        <table id="employeeTable" class="table table-striped table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="employee : ${EmployeesList}">
-                    <td th:text="${employee.id}"></td>
-                    <td th:text="${employee.firstName}"></td>
-                    <td th:text="${employee.lastName}"></td>
-                    <td th:text="${employee.email}"></td>
-                    <td>
-                        <a th:href="@{/api/update(employeeId=${employee.id})}" class="btn btn-primary"
-                            style="padding : 8px 20px; margin-left: px; ">Edit</a>
-                        <a th:href="@{/api/delete(employeeId=${employee.id})}" class="btn btn-danger"
-                            style="padding: 8px 15px"
-                            onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-    </div>
-
-    <!-- Bootstrap JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <!-- DataTables JavaScript -->
-    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#employeeTable').DataTable();
-        });
-    </script>
-</body>
-
-</html>
+<h2 class="text-center">Employee List</h2>
+<br>
+<table id="employeeTable" class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="employee : ${EmployeesList}">
+            <td th:text="${employee.id}"></td>
+            <td th:text="${employee.firstName}"></td>
+            <td th:text="${employee.lastName}"></td>
+            <td th:text="${employee.email}"></td>
+            <td>
+                <a th:href="@{/api/update(employeeId=${employee.id})}" class="btn btn-primary"
+                    style="padding : 8px 20px; margin-left: px; ">Edit</a>
+                <a th:href="@{/api/delete(employeeId=${employee.id})}" class="btn btn-danger"
+                    style="padding: 8px 15px"
+                    onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
+            </td>
+        </tr>
+    </tbody>
+</table>

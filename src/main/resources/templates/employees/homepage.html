@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link th:href="@{/DataTables/datatables.min.css}" rel="stylesheet">
+    <link rel="icon" th:href="@{/css/image/YomaBankLogo.png}" type="image/png">
+    <title>Employee List</title>
+    <style>
+        body {
+            padding-top: 50px;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px; /* Initially hide the sidebar */
+            height: 100%;
+            width: 200px;
+            background-color: #f8f9fa;
+            padding-top: 50px; /* Adjust according to your header height */
+            transition: left 0.3s ease; /* Add transition for smooth animation */
+        }
+
+        .sidebar.active {
+            left: 0; /* Show the sidebar when active */
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding-left: 0;
+
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+        }
+
+        .sidebar ul li a {
+            text-decoration: none;
+            color: #000;
+            display: block;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #e9ecef;
+        }
+
+        .content {
+            margin-left: 0; /* Adjust according to your sidebar width */
+            padding: 20px;
+            transition: margin-left 0.3s ease; /* Add transition for smooth content movement */
+        }
+
+        .content.active {
+            margin-left: 200px; /* Adjust according to your sidebar width */
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 120px;
+            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        #sidebarToggle{
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header" style="display: flex; align-items: center;">
+                    <div class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars fa-2x"></i>
+                    </div>
+                    <a class="navbar-brand" href="#"
+                        style="margin-left: 10px;display:flex; align-items: center; color: black">
+                        <img th:src="@{/css/image/YomaBankLogo.png}" alt="Yoma Bank Logo" height="20"
+                            style="margin-right: 5px;">
+                        <span style="vertical-align: middle;">Yoma Bank(Core)</span>
+                    </a>
+                </div>
+
+
+            </div><!-- /.container-fluid -->
+        </nav>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <ul>
+            <li><!-- Added padding -->
+                <div class="dropdown">
+                    <button class="dropbtn"
+                        style="border: none; background: none; padding:0;"><i
+                            class="fa-solid fa-file-export"></i> Export</button>
+                    <div class="dropdown-content">
+                        <a th:href="@{/api/export-to-csv}">Excel</a>
+                        <a th:href="@{/api/export-to-pdf}">PDF</a>
+                    </div>
+                </div>
+            </li>
+            <li><!-- Added padding -->
+                <div class="dropdown"style="margin-bottom: 350px;">
+                    <button class="dropbtn"
+                        style="border: none; background: none; padding:0; "><i
+                            class="fas fa-users"></i> Employees</button>
+                    <div class="dropdown-content">
+                        <a href="#" id="viewEmployees">View</a>
+                        <a th:href="@{/api/add}" class="create">Add</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <form th:action="@{/logout}" method="post">
+            <hr>
+            <button type="submit" class="btn btn-default"
+                style="background: none;padding-left: 20px;padding-top: 0px;  color: black; border: none;"><i
+                    class="fas fa-sign-out-alt"></i> Log Out</button>
+        </form>
+    </div>
+    
+
+
+
+    <div class="container content" id="mainContent">
+        <div id="loading" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+            <h1><i class="fas fa-spinner fa-spin"></i> Loading...</h1>
+        </div>
+    </div>
+    
+    
+
+    <!-- Bootstrap JavaScript -->
+    <script th:src="@{/js/jquery-3.7.1.js}"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <!-- DataTables JavaScript -->
+    <script th:src="@{/DataTables/datatables.min.js}"></script>
+    <script>
+        $(document).ready(function() {
+            $('#sidebarToggle').click(function() {
+                $('#sidebar').toggleClass('active');
+                $('#mainContent').toggleClass('active');
+            });
+            $('#viewEmployees').click(function(){
+              
+                $('#loading').show();
+            // Make an AJAX request to fetch the list of employees
+            $.get("/api/list", function(data, status){
+                // Assuming the data returned is HTML, you can directly populate it into the mainContent div
+                $('#loading').hide();
+                $("#mainContent").html(data);
+                $("#employeeTable").DataTable({
+    // Specify your options here
+});
+
+            });
+        });
+        });
+        </script>
+        
+
+</body>
+
+</html>
+
