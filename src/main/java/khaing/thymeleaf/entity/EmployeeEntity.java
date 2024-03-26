@@ -64,14 +64,4 @@ public class EmployeeEntity {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    @Override
-    public String toString() {
-        return "{" +
-                "\"id\": \"" + id + "\"," +
-                "\"firstName\": \"" + firstName + "\"," +
-                "\"lastName\": \"" + lastName + "\"," +
-                "\"email\": \"" + email + "\"" +
-                "}";
-    }
 }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,71 +11,86 @@
     <style>
         /* Custom CSS for styling the form */
         .container {
-            margin-top: 50px;
-            max-width: 400px; /* Adjusted maximum width */
-            margin-left: auto;
-            margin-right: auto;
+            position: relative;
+            max-width: 400px;
+            height: 90vh;
         }
+
+        .centered {
+            top: 10%;
+            height: 90vh;
+            /* Adjusted height */
+        }
+
         .form-container {
             background-color: #f5f5f5;
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            /* Adjusted width */
+            max-width: 100%;
+           
+            /* Ensure it doesn't exceed viewport width */
         }
+
         .form-container label {
             font-weight: bold;
         }
+
         .form-container input[type="text"],
         .form-container input[type="email"] {
             border-radius: 5px;
             border: 1px solid #ccc;
             padding: 8px;
-            width: 100%; /* Adjusted width */
+            width: 100%;
+            /* Adjusted width */
             margin-bottom: 15px;
         }
+
         .form-container .btn-container {
             display: flex;
             justify-content: space-between;
         }
-        .form-container button[type="submit"]
-        {
+
+        .form-container button[type="submit"] {
             border: none;
             color: white;
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
         }
-       
-        
-        
+
+
+
         .form-container button[type="submit"]:hover {
             background-color: #0056b3;
         }
-        
+
         .btn-cancel {
-            
+
             border: none;
             color: rgb(6, 101, 184);
             padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-         }
+        }
 
         .btn-cancel:hover {
             text-decoration: underline;
         }
-
-        
     </style>
 </head>
+
 <body>
     <div class="container">
-        <h2 class="text-center">Create Employee</h2>
+        <h2 class="text-center">Add Employee</h2>
         <!-- Form for adding new employee -->
         <form class="form-container" th:action="@{/api/save}" th:object="${employee}" method="post">
             <div class="form-group">
                 <label for="first_name">First Name:</label>
-                <input type="text" class="form-control" id="first_name" name="first_name"th:field="*{firstName}" required>
+                <input type="text" class="form-control" id="first_name" name="first_name" th:field="*{firstName}"
+                    required>
             </div>
             <div class="form-group">
                 <label for="last_name">Last Name:</label>
@@ -89,17 +105,39 @@
                 <a th:href="@{/api/home}" class="btn btn-cancel">
                     Cancel
                 </a>
-                
+
 
 
             </div>
         </form>
-        
+
         <!-- Table displaying employee list -->
         <!-- Your existing table code here -->
     </div>
-    
+
     <!-- Bootstrap JavaScript (optional, if you're using components that require it) -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+        function trimWhitespace() {
+            var firstNameInput = document.getElementById('first_name');
+            var lastNameInput = document.getElementById('last_name');
+            var emailInput = document.getElementById('email');
+    
+            // Trim whitespace from input values
+            firstNameInput.value = firstNameInput.value.trim();
+            lastNameInput.value = lastNameInput.value.trim();
+            emailInput.value = emailInput.value.trim();
+    
+            return true; // Return true to allow form submission
+        }
+    
+        // Add event listener to the form for submission
+        document.addEventListener('DOMContentLoaded', function() {
+            var form = document.querySelector('.form-container');
+            form.addEventListener('submit', trimWhitespace);
+        });
+    </script>
+    
 </body>
+
 </html>

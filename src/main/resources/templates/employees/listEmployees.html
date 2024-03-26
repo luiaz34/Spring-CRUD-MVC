@@ -1,28 +1,178 @@
-<h2 class="text-center">Employee List</h2>
-<br>
-<table id="employeeTable" class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="employee : ${EmployeesList}">
-            <td th:text="${employee.id}"></td>
-            <td th:text="${employee.firstName}"></td>
-            <td th:text="${employee.lastName}"></td>
-            <td th:text="${employee.email}"></td>
-            <td>
-                <a th:href="@{/api/update(employeeId=${employee.id})}" class="btn btn-primary"
-                    style="padding : 8px 20px; margin-left: px; ">Edit</a>
-                <a th:href="@{/api/delete(employeeId=${employee.id})}" class="btn btn-danger"
-                    style="padding: 8px 15px"
-                    onclick="return confirm('Are you sure you want to delete this?');">Delete</a>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link th:href="@{/DataTables/datatables.min.css}" rel="stylesheet">
+    <style>
+        #exportButton {
+            display: inline-block;
+            outline: 0;
+            cursor: pointer;
+            border: none;
+            padding: 0 20px;
+            height: 45px;
+            line-height: 45px;
+            border-radius: 7px;
+            font-weight: 400;
+            font-size: 16px;
+            background: #f9f9f9;
+            z-index: 999;
+            color: black;
+            box-shadow: 0 4px 14px 0 rgb(0 0 0 / 10%);
+            transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .dropDown {
+            position: absolute;
+            top: 100px;
+            /* right: 130px; Adjust right position as needed */
+        }
+    
+        .dropDown-content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            display: none; /* Hide by default */
+            background-color: #f9f9f9;
+            min-width: 120px;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            float: right;
+        }
+    
+        .dropDown:hover .dropDown-content {
+            display: block; /* Display when the dropdown container is hovered */
+        }
+    
+        .swal2-popup {
+            font-size: 18px;
+            /* Adjust font size */
+        }
+    
+        .swal2-title {
+            font-size: 24px;
+            /* Adjust title font size */
+        }
+    
+        .swal2-content {
+            font-size: 20px;
+            /* Adjust content font size */
+        }
+    
+        .swal2-actions {
+            font-size: 18px;
+            /* Adjust button font size */
+        }
+    </style>
+    
+</head>
+
+<body>
+    <div class="container-fluid">
+        <h2 class="text-center">Employee List</h2>
+        <br>
+        <div class="dropdown dropDown">
+            <button class="dropbtn" id="exportButton" style="background: white;"><i class="fa-solid fa-file-export"></i>
+                File Export</button>
+            <div class="dropDown-content">
+                <a th:href="@{/api/export-to-csv}">CSV</a>
+                <a th:href="@{/api/export-to-pdf}">PDF</a>
+            </div>
+        </div>
+        <table id="employeeTable" class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="employee : ${EmployeesList}">
+                    <td th:text="${employee.id}"></td>
+                    <td th:text="${employee.firstName}"></td>
+                    <td th:text="${employee.lastName}"></td>
+                    <td th:text="${employee.email}"></td>
+                    <td>
+                        <a href="#" class="btn btn-primary editButton" style="padding: 8px 20px;">Edit</a>
+                        <a href="#" class="btn btn-danger deleteButton" style="padding: 8px 15px;">Delete</a>
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+    </div>
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- DataTables JavaScript -->
+<script th:src="@{/DataTables/datatables.min.js}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+
+$('#employeeTable').DataTable();
+        $('.editButton').click(function () {
+            var employeeId = $(this).closest('tr').find('td:first').text();
+
+            $('#mainContent').removeClass('active');
+            $('#sidebar').removeClass('active');
+            $('#loading').show();
+
+            $.ajax({
+                url: "/api/update",
+                type: "GET",
+                data: { employeeId: employeeId },
+                success: function (data, status) {
+                    $('#loading').hide();
+                    $('#mainContent').html(data);
+                },
+                error: function (xhr, status, error) {
+                    $('#loading').hide();
+                    Swal.fire("Rejected!!!", "You do not have enough permission to edit", "error");
+                    // Handle error, show error message to user, etc.
+                }
+            });
+        });
+
+        $('.deleteButton').click(function () {
+            var employeeId = $(this).closest('tr').find('td:first').text();
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('#loading').show();
+                    $.ajax({
+                        url: '/api/delete',
+                        type: 'GET',
+                        data: { employeeId: employeeId },
+                        success: function (data, status) {
+                            location.reload();
+                        },
+                        error: function (xhr, status, error) {
+                            Swal.fire('Rejected!!!', 'You do not have permission to delete', 'error');
+                        },
+                        complete: function () {
+                            $('#loading').hide();
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
@@ -9,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <link th:href="@{/DataTables/datatables.min.css}" rel="stylesheet">
     <link rel="icon" th:href="@{/css/image/YomaBankLogo.png}" type="image/png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <title>Employee List</title>
     <style>
         body {
@@ -18,16 +18,21 @@
         .sidebar {
             position: fixed;
             top: 0;
-            left: -250px; /* Initially hide the sidebar */
+            left: -250px;
+            /* Initially hide the sidebar */
             height: 100%;
             width: 200px;
-            background-color: #f8f9fa;
-            padding-top: 50px; /* Adjust according to your header height */
-            transition: left 0.3s ease; /* Add transition for smooth animation */
+            background-color: #f9f9f9;
+            z-index: 100;
+            padding-top: 50px;
+            /* Adjust according to your header height */
+            transition: left 0.3s ease;
+            /* Add transition for smooth animation */
         }
 
         .sidebar.active {
-            left: 0; /* Show the sidebar when active */
+            left: 0;
+            /* Show the sidebar when active */
         }
 
         .sidebar ul {
@@ -37,7 +42,7 @@
         }
 
         .sidebar ul li {
-            padding: 15px;
+            padding: 10px;
         }
 
         .sidebar ul li a {
@@ -46,19 +51,22 @@
             display: block;
         }
 
-        .sidebar ul li a:hover {
+        /* .sidebar ul li a:hover {
             background-color: #e9ecef;
-        }
+        } */
 
         .content {
-            margin-left: 0; /* Adjust according to your sidebar width */
+            margin-left: 0;
+            /* Adjust according to your sidebar width */
             padding: 20px;
-            transition: margin-left 0.3s ease; /* Add transition for smooth content movement */
+            transition: margin-left 0.3s ease;
+            /* Add transition for smooth content movement */
         }
 
-        .content.active {
-            margin-left: 200px; /* Adjust according to your sidebar width */
-        }
+        /* .content.active {
+            margin-left: 200px;
+        
+        } */
 
         .dropdown {
             position: relative;
@@ -70,7 +78,7 @@
             position: absolute;
             background-color: #f9f9f9;
             min-width: 120px;
-            box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
             z-index: 1;
         }
 
@@ -88,15 +96,49 @@
         .dropdown-content a:hover {
             background-color: #f1f1f1;
         }
-        #sidebarToggle{
+
+        #sidebarToggle {
             cursor: pointer;
+        }
+
+
+
+        .mySwiper img {
+            max-width: calc(100% - 160px);
+            max-height: 100%;
+            margin: 0 120px;
+
+        }
+
+        .mySwiper {
+            justify-content: center;
+            align-items: center;
+            max-width: 1200px;
+            max-height: 1200px;
+            margin: 0 auto;
+        }
+
+        .swiper-pagination {
+            padding-top: 10px;
+        }
+
+        .swal2-popup {
+            font-size: 1.6rem;
+            /* Adjust the font size as needed */
+        }
+
+        /* Change button color to blue */
+        .swal2-confirm {
+            background-color: blue;
+            /* Change to your desired button color */
+            color: white;
+            /* Change to your desired button text color */
         }
     </style>
 </head>
 
 <body>
     <header>
-
         <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container-fluid">
                 <!-- Brand and toggle get grouped for better mobile display -->
@@ -111,86 +153,161 @@
                         <span style="vertical-align: middle;">Yoma Bank(Core)</span>
                     </a>
                 </div>
-
-
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <form th:action="@{/logout}" method="post" style="display: inline; padding: 10px;">
+                                <button type="submit" class="btn btn-default"
+                                    style="margin: 0; padding: 16px; background: none; color: black; border: none;"><i
+                                        class="fas fa-sign-out-alt"></i> Log Out</button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
             </div><!-- /.container-fluid -->
         </nav>
     </header>
-
-    <div class="sidebar" id="sidebar">
-        <ul>
-            <li><!-- Added padding -->
-                <div class="dropdown">
-                    <button class="dropbtn"
-                        style="border: none; background: none; padding:0;"><i
-                            class="fa-solid fa-file-export"></i> Export</button>
-                    <div class="dropdown-content">
-                        <a th:href="@{/api/export-to-csv}">Excel</a>
-                        <a th:href="@{/api/export-to-pdf}">PDF</a>
+    <div class="container-fluid">
+        <div class="sidebar" id="sidebar">
+            <ul>
+                <li>
+                    <a th:href="@{/api/home}"><i class="fa-solid fa-house"></i> Home</a>
+                </li>
+                <li> <!-- Set position to relative -->
+                    <div class="dropdown">
+                        <button class="dropbtn" style="border: none; background: none; padding: 0;"><i
+                                class="fas fa-users"></i>Employees</button>
+                        <div class="dropdown-content" style="left: 0; top: 100%; position: absolute;">
+                            <!-- Adjust position to be relative to the parent li -->
+                            <a href="#" id="viewEmployees">List</a>
+                            <a href="#" id="createEmployees">Add</a>
+                        </div>
                     </div>
-                </div>
-            </li>
-            <li><!-- Added padding -->
-                <div class="dropdown"style="margin-bottom: 350px;">
-                    <button class="dropbtn"
-                        style="border: none; background: none; padding:0; "><i
-                            class="fas fa-users"></i> Employees</button>
-                    <div class="dropdown-content">
-                        <a href="#" id="viewEmployees">View</a>
-                        <a th:href="@{/api/add}" class="create">Add</a>
-                    </div>
-                </div>
-            </li>
-        </ul>
-        <form th:action="@{/logout}" method="post">
-            <hr>
-            <button type="submit" class="btn btn-default"
-                style="background: none;padding-left: 20px;padding-top: 0px;  color: black; border: none;"><i
-                    class="fas fa-sign-out-alt"></i> Log Out</button>
-        </form>
-    </div>
-    
+                </li>
 
+            </ul>
 
-
-    <div class="container content" id="mainContent">
-        <div id="loading" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-            <h1><i class="fas fa-spinner fa-spin"></i> Loading...</h1>
         </div>
     </div>
-    
-    
+
+    <div class="loading-overlay"></div>
+    <div id="loading"
+        style="display: none; position: absolute; top:50%; left: 50%; translate:(-50%, -50%); z-index: 999;">
+        <h1><i class="fas fa-spinner fa-spin" style="color: red"></i></h1>
+    </div>
+    <div class="container content" id="mainContent">
+        <div class="welcome" style="justify-content: center; display: flex;">
+            <h2>Welcome to <span style="color: rgba(220, 7, 7, 0.749);">Yoma Bank</span></h2>
+        </div>
+        <div class="swiper mySwiper" style="margin-top: 30px;">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <img th:src="@{/images/yoma4.png}" alt="Yoma Advertisment">
+                </div>
+                <div class="swiper-slide">
+                    <img th:src="@{/images/yoma5.png}" alt="Yoma Advertisment">
+                </div>
+                <div class="swiper-slide">
+                    <img th:src="@{/images/yoma6.png}" alt="Yoma Advertisment">
+                </div>
+                <div class="swiper-slide">
+                    <img th:src="@{/images/yoma7.png}" alt="Yoma Advertisment">
+                </div>
+            </div>
+
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+
+
+
 
     <!-- Bootstrap JavaScript -->
     <script th:src="@{/js/jquery-3.7.1.js}"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <!-- DataTables JavaScript -->
     <script th:src="@{/DataTables/datatables.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        $(document).ready(function() {
-            $('#sidebarToggle').click(function() {
+        var swiper = new Swiper(".mySwiper", {
+            spaceBetween: 30,
+            centeredSlides: true,
+            autoplay: {
+                delay: 1500,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: ".swiper-pagination",
+                clickable: true,
+            },
+        });
+        $(document).ready(function () {
+            function closeSidebar() {
+                $('#sidebar').removeClass('active');
+                $('#mainContent').removeClass('active');
+            }
+            $('#sidebarToggle').click(function () {
+                event.stopPropagation();
                 $('#sidebar').toggleClass('active');
                 $('#mainContent').toggleClass('active');
             });
-            $('#viewEmployees').click(function(){
-              
+
+            $(document).click(function (event) {
+                // Check if the sidebar is active and the clicked element is not within the sidebar or sidebarToggle
+                if ($('#sidebar').hasClass('active') && !$(event.target).closest('#sidebar').length && !$(event.target).is('#sidebarToggle')) {
+                    // Close sidebar
+                    closeSidebar();
+                }
+            });
+            $('#viewEmployees').click(function () {
                 $('#loading').show();
-            // Make an AJAX request to fetch the list of employees
-            $.get("/api/list", function(data, status){
-                // Assuming the data returned is HTML, you can directly populate it into the mainContent div
-                $('#loading').hide();
-                $("#mainContent").html(data);
-                $("#employeeTable").DataTable({
-    // Specify your options here
-});
+
+                $.ajax({
+                    url: "/api/list",
+                    type: "GET",
+                    success: function (data, status, xhr) {
+                        
+                        if (xhr.getResponseHeader('Content-Type').indexOf('text/html') !== -1 && xhr.status === 200) {  
+                            // Response is JavaScript, continue as usual
+                            
+                            $('#loading').hide();
+                            $("#mainContent").html(data);
+                            closeSidebar();
+                        } else {
+                            showSessionExpiredAlert();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle AJAX error
+                        console.error(error);
+                    }
+                });
 
             });
-        });
-        });
-        </script>
-        
+            $('#createEmployees').click(function () {
+                $('#loading').show();
+                $.ajax({
+                    url: "/api/add",
+                    type: "GET",
+                    success: function (data, status, xhr) {
+                        if (xhr.getResponseHeader('Content-Type').indexOf('text/html') !== -1 && xhr.status === 200) {
+                                $('#loading').hide();
+                            $('#mainContent').html(data);
+                            closeSidebar();
+                            
+                        }else {
+                            showSessionExpiredAlert();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle AJAX error
+                        console.error(error);
+                    }
+                });
+            });
 
+        });
+  
+    </script>
 </body>
-
-</html>
-

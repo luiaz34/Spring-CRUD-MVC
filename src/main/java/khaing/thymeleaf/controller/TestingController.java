@@ -2,9 +2,17 @@ package khaing.thymeleaf.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +23,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lowagie.text.DocumentException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import khaing.thymeleaf.dao.EmployeeRepo;
 import khaing.thymeleaf.entity.EmployeeEntity;
 import khaing.thymeleaf.service.CacheService;
@@ -31,16 +41,18 @@ public class TestingController {
     private EmployeeRestId employeeRestId;
     private CsvFileGenerator csvFileGenerator;
     private PdfFileGenerator pdfFileGenerator;
-    private CacheService cacheService;
+    private final SessionRegistry sessionRegistry;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
     public TestingController(EmployeeRepo thEmployeeRepo, EmployeeRestId theEmployeeRestId,
-            CsvFileGenerator theCsvFileGenerator, PdfFileGenerator thPdfFileGenerator,CacheService theCacheService) {
+            CsvFileGenerator theCsvFileGenerator, PdfFileGenerator thPdfFileGenerator,SessionRegistry thSessionRegistry,JdbcTemplate thTemplate) {
         this.employeeRepo = thEmployeeRepo;
         this.employeeRestId = theEmployeeRestId;
         this.csvFileGenerator = theCsvFileGenerator;
         this.pdfFileGenerator = thPdfFileGenerator;
-        this.cacheService = theCacheService;
+        this.sessionRegistry = thSessionRegistry;
+        this.jdbcTemplate = thTemplate;
 
     }
 
@@ -66,8 +78,12 @@ public class TestingController {
 
     @PostMapping("/save")
     public String saveEmployee(@ModelAttribute("employee") EmployeeEntity employeeEntity) {
+        employeeEntity.setFirstName(employeeEntity.getFirstName().trim());
+        employeeEntity.setLastName(employeeEntity.getLastName().trim());
+        employeeEntity.setEmail(employeeEntity.getEmail().trim());
+        
         employeeRepo.save(employeeEntity);
-        return "redirect:/api/list";
+        return "redirect:/api/home";
     }
 
     @GetMapping("/update")
@@ -85,9 +101,30 @@ public class TestingController {
     }
 
     @GetMapping("/showLogin")
-    public String loginPage() {
+    public String loginPage(@RequestParam(value = "invalid-session",defaultValue = "false")boolean invalidSession,Model model) {
+        if(invalidSession){
+            model.addAttribute("invalidSession", "SessionExpired");
+        }
         return "loginRegister/loginRegisterTemplate";
     }
+    @GetMapping("/checkSession")
+    public ResponseEntity<?> checkSession(HttpServletRequest request) {
+        String sessionId = request.getSession().getId();
+        
+        // Query the spring_session table to check if the session is expired
+        String sql = "SELECT PRINCIPAL_NAME FROM spring_session WHERE SESSION_ID = ?";
+        List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, sessionId);
+        System.out.println(result);
+        if (!result.isEmpty()) {
+            return ResponseEntity.ok().body("{\"sessionExpired\": false}");
+            // Session is active
+        } else {
+            // Session not found, consider it expired
+            return ResponseEntity.status(HttpStatus.FOUND).body("{\"sessionExpired\": true}");
+        }
+    }
+    
+
 
     @GetMapping("/roleAccessDenied")
     public String accessDeniedPage() {
