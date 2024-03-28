@@ -5,14 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
-import org.springframework.security.core.userdetails.User;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,10 +22,10 @@ import com.lowagie.text.DocumentException;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+
 import khaing.thymeleaf.dao.EmployeeRepo;
 import khaing.thymeleaf.entity.EmployeeEntity;
-import khaing.thymeleaf.service.CacheService;
+
 import khaing.thymeleaf.service.CsvFileGenerator;
 import khaing.thymeleaf.service.EmployeeRestId;
 import khaing.thymeleaf.service.PdfFileGenerator;

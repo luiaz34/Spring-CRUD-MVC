@@ -41,8 +41,7 @@ public class EmployeeSecurity {
                                                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                                                 .maximumSessions(1)
                                                 .maxSessionsPreventsLogin(false)
-                                                .expiredUrl("/api/showLogin"))
-                                                
+                                                .expiredUrl("/api/showLogin"))                         
                                         
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
