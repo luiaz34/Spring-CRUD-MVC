@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.session.SessionRegistry;
 
 import org.springframework.stereotype.Controller;
@@ -104,20 +107,17 @@ public class TestingController {
         }
         return "loginRegister/loginRegisterTemplate";
     }
-    @GetMapping("/checkSession")
-    public ResponseEntity<?> checkSession(HttpServletRequest request) {
-        String sessionId = request.getSession().getId();
+
+     @GetMapping("/checkAuthenticated")
+    public ResponseEntity<?> checkAuthenticated() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
-        // Query the spring_session table to check if the session is expired
-        String sql = "SELECT PRINCIPAL_NAME FROM spring_session WHERE SESSION_ID = ?";
-        List<Map<String, Object>> result = jdbcTemplate.queryForList(sql, sessionId);
-        System.out.println(result);
-        if (!result.isEmpty()) {
-            return ResponseEntity.ok().body("{\"sessionExpired\": false}");
-            // Session is active
+        if (authentication != null && authentication.isAuthenticated() && !(authentication instanceof AnonymousAuthenticationToken)) {
+            // User is authenticated
+            return ResponseEntity.ok().body("{\"authenticated\": true}");
         } else {
-            // Session not found, consider it expired
-            return ResponseEntity.status(HttpStatus.FOUND).body("{\"sessionExpired\": true}");
+            // User is not authenticated
+            return ResponseEntity.ok().body("{\"authenticated\": false}");
         }
     }
     

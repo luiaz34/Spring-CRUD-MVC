@@ -29,6 +29,7 @@ public class EmployeeSecurity {
                                 .authorizeHttpRequests(configurer -> configurer
                                                 .requestMatchers("/css/loginRegisterForm.css", "/js/script.js")
                                                 .permitAll()
+                                                .requestMatchers("/api/checkAuthenticated").permitAll()
                                                 .requestMatchers("/api/update").hasAnyRole("MANAGER", "ADMIN")
                                                 .requestMatchers("/api/delete").hasRole("ADMIN")
                                                 .anyRequest().authenticated())
@@ -41,7 +42,8 @@ public class EmployeeSecurity {
                                                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                                                 .maximumSessions(1)
                                                 .maxSessionsPreventsLogin(false)
-                                                .expiredUrl("/api/showLogin"))                         
+                                                //.expiredUrl("/api/showLogin"))   
+                                                .expiredUrl("/logout"))                      
                                         
                                 .logout(logout -> logout
                                                 .logoutUrl("/logout")
